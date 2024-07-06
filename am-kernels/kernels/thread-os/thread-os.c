@@ -15,8 +15,8 @@ typedef union task {
 } Task;
 
 Task *currents[MAX_CPU];
-#define current currents[cpu_current()]
-
+//#define current currents[cpu_current()]
+Task * current = NULL;
 // user-defined tasks
 
 int locked = 0;
@@ -26,10 +26,10 @@ void unlock() { atomic_xchg(&locked, 0); }
 void func(void *arg) {
   while (1) {
     lock();
-    printf("Thread-%s on CPU #%d\n", arg, cpu_current());
+    printf("Thread-%s on CPU #%d, cpus: %d\n", arg, cpu_current(), cpu_count());
 
     unlock();
-    for (int volatile i = 0; i < 100000; i++) ;
+    for (int volatile i = 0; i < 10000000; i++) ;
   }
 }
 
@@ -44,11 +44,15 @@ Task tasks[] = {
 // ------------------
 
 Context *on_interrupt(Event ev, Context *ctx) {
-  extern Task tasks[];
-  if (!current) current = &tasks[0];
-  else          current->context = ctx;
+  //extern Task tasks[];
+  
+  if (!current) 
+    current = &tasks[0];
+  else          
+    current->context = ctx;
   do {
     current = current->next;
+    
   } while ((current - tasks) % cpu_count() != cpu_current());
   return current->context;
 }

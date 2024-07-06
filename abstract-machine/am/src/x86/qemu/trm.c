@@ -77,6 +77,7 @@ void __am_lapic_init() {
            ptr < (char *)conf + conf->length; ptr += 8) {
         if (*ptr == '\0') {
           ptr += 12;
+          
           panic_on(++__am_ncpu > MAX_CPU, "cannot support > MAX_CPU processors");
         }
       }
