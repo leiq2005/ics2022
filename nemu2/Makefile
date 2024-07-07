@@ -4,10 +4,11 @@ BUILD_DIR = $(WORK_DIR)/build
 
 # 定义变量
 CC := gcc
-CFLAGS := -Wall -g
+#CFLAGS := -Wall -g
+CFLAGS := -Wall -Wextra -Werror -pedantic -g -O0
 SRC := main.c
 OBJ := $(BUILD_DIR)/main.o
-EXEC := $(BUILD_DIR)/hello
+EXEC := $(BUILD_DIR)/main
 
 # 默认目标
 all: $(EXEC)

@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.inc": "c",
+        "bitset": "c",
+        "algorithm": "c",
+        "random": "c"
+    }
+}
