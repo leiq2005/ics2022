@@ -22,6 +22,33 @@
                 "isDefault": true
             },
             "detail": "调试器生成的任务。"
+        },
+        {
+            "label": "Compile and Run HelloWorld",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-o",
+                "${workspaceFolder}/nemu2/build/HelloWorld",
+                "${workspaceFolder}/nemu2/HelloWorld.c"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Compiles and runs HelloWorld.c"
+        },
+        {
+            "label": "Run HelloWorld",
+            "type": "shell",
+            "command": "${workspaceFolder}/nemu2/build/HelloWorld",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dependsOn": "Compile and Run HelloWorld",
+            "detail": "Runs the compiled HelloWorld executable"
         }
     ],
     "version": "2.0.0"

@@ -54,22 +54,39 @@ void printtokens()
 int getsize(int p, int q)
 {
     int len = 0;
-    for (size_t i = p; i < q; i++)
+    for (size_t i = p; i <= q; i++)
     {
         len += tokens[i].len;
     }
     return len;
 }
+void printstr(char *str)
+{
+    int i = 0;
+    while (str[i] != '\0')
+    {
+        printf("%c",str[i]);
+        i++;
+    }
+    printf("\n");
+}
 void getsubstr(int p, int q, char *substr)
 {
+    int lens = strlen(substr);
+    printf("substr len: %u \n", lens);
     int m = 0;
-    for (size_t i = p; i < q; i++)
+    for (size_t i = p; i <= q; i++)
     {
         char *temp = tokens[i].str;
-        assert((strlen(temp) - 2 >= 0));
-        for (size_t i = 0; i < strlen(temp) - 2; i++)
+
+        int len = strlen(temp);
+        printf("===== %d \n", len);
+        
+        for (size_t x = 0; x < len; x++)
         {
-            substr[m++] = temp[i];
+
+            substr[m++] = temp[x];
+            printstr(substr);
         }
     }
 }
@@ -152,11 +169,13 @@ int eval(int p, int q)
     }
     else
     {
-        // int len = getsize(p, q);
-        // char substr[len];
-        // getsubstr(p, q, substr);
+        int len = getsize(p, q);
+        char substr[len];
+        getsubstr(p, q, substr);
 
-        // int op_pos = findMainOperator(substr);
+        int op_pos = findMainOperator(substr);
+        printf("main op pos: %d \n", op_pos);
+        return 0;
         // int val1 = eval(p, op_pos - 1);
         // int val2 = eval(op_pos + 1, q);
 
@@ -179,7 +198,7 @@ int eval(int p, int q)
         //     break;
         // }
         // exit(1);
-        return 0;
+        // return 0;
     }
 }
 void match_regex(const char *expr)

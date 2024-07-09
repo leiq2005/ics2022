@@ -4,8 +4,8 @@ BUILD_DIR = $(WORK_DIR)/build
 
 # 定义变量
 CC := gcc
-#CFLAGS := -Wall -g
-CFLAGS := -Wall -Wextra -Werror -pedantic -g -O0
+CFLAGS := -Wall -g
+#CFLAGS := -Wall -Wextra -Werror -pedantic -g -O0
 SRC := main.c
 OBJ := $(BUILD_DIR)/main.o
 EXEC := $(BUILD_DIR)/main
@@ -31,6 +31,8 @@ $(EXEC): $(OBJ)
 run: $(EXEC)
 	$(EXEC)
 
+debug: $(EXEC)
+	gdb $(EXEC)
 # 清理
 clean:
 	rm -rf $(BUILD_DIR)
