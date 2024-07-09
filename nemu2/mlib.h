@@ -122,3 +122,86 @@ bool check(char *expr)
         return false;
     }
 }
+
+// 定义运算符的优先级
+int getPriority(char op)
+{
+    switch (op)
+    {
+    case '+':
+    case '-':
+        return 1;
+    case '*':
+    case '/':
+        return 2;
+    default:
+        return 0;
+    }
+}
+
+// 查找主运算符
+char findMainOperator(char *expr)
+{
+    int len = strlen(expr);
+    int minPriority = MAX;
+    char mainOperator = '\0';
+    int brackets = 0;
+
+    for (int i = 0; i < len; i++)
+    {
+        char c = expr[i];
+
+        if (c == '(')
+        {
+            brackets++;
+        }
+        else if (c == ')')
+        {
+            brackets--;
+        }
+        else if (brackets == 0 && (c == '+' || c == '-' || c == '*' || c == '/'))
+        {
+            int priority = getPriority(c);
+            if (priority <= minPriority)
+            {
+                minPriority = priority;
+                mainOperator = c;
+            }
+        }
+    }
+
+    return mainOperator;
+}
+
+int findMainOperatorPos(char *expr)
+{
+    int len = strlen(expr);
+    int minPriority = MAX;
+    int mainOperatorIndex = 999;
+    int brackets = 0;
+
+    for (int i = 0; i < len; i++)
+    {
+        char c = expr[i];
+
+        if (c == '(')
+        {
+            brackets++;
+        }
+        else if (c == ')')
+        {
+            brackets--;
+        }
+        else if (brackets == 0 && (c == '+' || c == '-' || c == '*' || c == '/'))
+        {
+            int priority = getPriority(c);
+            if (priority <= minPriority)
+            {
+                minPriority = priority;
+                mainOperatorIndex = i;
+            }
+        }
+    }
+
+    return mainOperatorIndex;
+}

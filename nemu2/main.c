@@ -65,7 +65,7 @@ void printstr(char *str)
     int i = 0;
     while (str[i] != '\0')
     {
-        printf("%c",str[i]);
+        printf("%c", str[i]);
         i++;
     }
     printf("\n");
@@ -81,7 +81,7 @@ void getsubstr(int p, int q, char *substr)
 
         int len = strlen(temp);
         printf("===== %d \n", len);
-        
+
         for (size_t x = 0; x < len; x++)
         {
 
@@ -94,62 +94,15 @@ bool check_parentheses(int p, int q)
 {
     int len = getsize(p, q);
     char substr[len];
+    substr[len] = '\0';
     getsubstr(p, q, substr);
 
     return check(substr);
-
-}
-// 定义运算符的优先级
-int getPriority(char op)
-{
-    switch (op)
-    {
-    case '+':
-    case '-':
-        return 1;
-    case '*':
-    case '/':
-        return 2;
-    default:
-        return 0;
-    }
 }
 
-// 查找主运算符
-char findMainOperator(char *expr)
-{
-    int len = strlen(expr);
-    int minPriority = MAX;
-    char mainOperator = '\0';
-    int brackets = 0;
-
-    for (int i = 0; i < len; i++)
-    {
-        char c = expr[i];
-
-        if (c == '(')
-        {
-            brackets++;
-        }
-        else if (c == ')')
-        {
-            brackets--;
-        }
-        else if (brackets == 0 && (c == '+' || c == '-' || c == '*' || c == '/'))
-        {
-            int priority = getPriority(c);
-            if (priority <= minPriority)
-            {
-                minPriority = priority;
-                mainOperator = c;
-            }
-        }
-    }
-
-    return mainOperator;
-}
 int eval(int p, int q)
 {
+    printf("eval   [p: %d  %d q]\n", p,q);
     if (p > q)
     {
         // error
@@ -169,36 +122,43 @@ int eval(int p, int q)
     }
     else
     {
+        
         int len = getsize(p, q);
         char substr[len];
+        substr[len] = '\0';
         getsubstr(p, q, substr);
 
-        int op_pos = findMainOperator(substr);
-        printf("main op pos: %d \n", op_pos);
-        return 0;
-        // int val1 = eval(p, op_pos - 1);
-        // int val2 = eval(op_pos + 1, q);
+        char op = findMainOperator(substr);
+        int op_pos = findMainOperatorPos(substr);
 
-        // assert(tokens[op_pos].type == TK_OP);
-        // switch (tokens[op_pos].str[0])
-        // {
-        // case '+':
-        //     return val1 + val2;
-        //     break;
-        // case '-':
-        //     return val1 - val2;
-        //     break;
-        // case '*':
-        //     return val1 * val2;
-        //     break;
-        // case '/':
-        //     return val1 / val2;
-        //     break;
-        // default:
-        //     break;
-        // }
-        // exit(1);
-        // return 0;
+        printf("exp: %s \n", substr);
+        printf("main op : %c \n", op);
+        printf("main op pos: %d \n", op_pos);
+        printf("p: %d \n", p);
+        
+        int val1 = eval(p, op_pos - 1);
+        int val2 = eval(op_pos + 1, q);
+
+        assert(tokens[op_pos].type == TK_OP);
+        switch (tokens[op_pos].str[0])
+        {
+        case '+':
+            return val1 + val2;
+            break;
+        case '-':
+            return val1 - val2;
+            break;
+        case '*':
+            return val1 * val2;
+            break;
+        case '/':
+            return val1 / val2;
+            break;
+        default:
+            break;
+        }
+        exit(1);
+        return 0;
     }
 }
 void match_regex(const char *expr)
