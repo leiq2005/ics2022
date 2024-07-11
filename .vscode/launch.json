@@ -5,7 +5,7 @@
             "name": "Debug C Program",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/nemu2/main",
+            "program": "${workspaceFolder}/nemu2/build/main",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/nemu2",
