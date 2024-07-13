@@ -3,6 +3,8 @@
         "*.inc": "c",
         "bitset": "c",
         "algorithm": "c",
-        "random": "c"
+        "random": "c",
+        "string.h": "c",
+        "regex.h": "c"
     }
 }

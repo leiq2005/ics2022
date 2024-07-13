@@ -1,4 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <stdbool.h>
+#include <assert.h>
+#include "mlib.h"
+
+#define MAX_EXPR_LEN 100
+int pos = 0;
 
 typedef enum
 {
@@ -8,6 +17,7 @@ typedef enum
     TK_LB,
     TK_RB
 } TokenType;
+
 typedef struct token
 {
     int type;
@@ -15,18 +25,8 @@ typedef struct token
     char str[32];
 } Token;
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <regex.h>
-#include <stdbool.h>
-#include <assert.h>
-#include "mlib.h"
-
-#define MAX_EXPR_LEN 100
-
-int pos = 0;
 Token tokens[64];
+
 void match(regex_t *regex, const char *p, regmatch_t *pmatch, regmatch_t *good)
 {
     int reti = regexec(regex, p, 1, pmatch, 0);
@@ -99,7 +99,38 @@ bool check_parentheses(int p, int q)
 
     return check(substr);
 }
+int findMainOperatorPos(int p, int q)
+{
+    int minPriority = MAX;
+    int mainOperatorIndex = 999;
+    int brackets = 0;
 
+    for (int i = p; i <= q; i++)
+    {
+        Token t = tokens[i];
+
+        if (t.type == TK_LB)
+        {
+            brackets++;
+        }
+        else if (t.type == TK_RB)
+        {
+            brackets--;
+        }
+        else if (brackets == 0 && t.type == TK_OP)
+        {
+            char c = t.str[0];
+            int priority = getPriority(c);
+            if (priority <= minPriority)
+            {
+                minPriority = priority;
+                mainOperatorIndex = i;
+            }
+        }
+    }
+
+    return mainOperatorIndex;
+}
 int eval(int p, int q)
 {
     printf("eval   [p: %d  %d q]\n", p,q);
@@ -122,17 +153,8 @@ int eval(int p, int q)
     }
     else
     {
-        
-        int len = getsize(p, q);
-        char substr[len];
-        substr[len] = '\0';
-        getsubstr(p, q, substr);
+        int op_pos = findMainOperatorPos(p, q);
 
-        char op = findMainOperator(substr);
-        int op_pos = findMainOperatorPos(substr);
-
-        printf("exp: %s \n", substr);
-        printf("main op : %c \n", op);
         printf("main op pos: %d \n", op_pos);
         printf("p: %d \n", p);
         
