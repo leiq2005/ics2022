@@ -5,9 +5,32 @@
 
 #define MAX 100
 
+
+
+typedef enum
+{
+    TK_NOTYPE,
+    TK_NUM,
+    TK_OP,
+    TK_LB,
+    TK_RB
+} TokenType;
+
+typedef struct token
+{
+    int id;
+    int type;
+    char len;
+    char str[32];
+} Token;
+
+Token tokens[64];
+
+
 typedef struct
 {
     char items[MAX];
+    Token items2[MAX];
     int top;
 } Stack;
 
@@ -39,7 +62,15 @@ void push(Stack *s, char c)
     }
     s->items[++(s->top)] = c;
 }
-
+void push2(Stack *s, Token c)
+{
+    if (isFull(s))
+    {
+        printf("Stack overflow\n");
+        exit(1);
+    }
+    s->items2[++(s->top)] = c;
+}
 // 出栈
 char pop(Stack *s)
 {
@@ -50,7 +81,15 @@ char pop(Stack *s)
     }
     return s->items[(s->top)--];
 }
-
+Token pop2(Stack *s)
+{
+    if (isEmpty(s))
+    {
+        printf("Stack underflow\n");
+        exit(1);
+    }
+    return s->items2[(s->top)--];
+}
 // 获取栈顶元素
 char peek(Stack *s)
 {
@@ -71,57 +110,59 @@ bool isMatchingPair(char left, char right)
 }
 
 // 检查表达式中的括号是否匹配
-bool areParenthesesBalanced(const char *expr)
-{
-    Stack s;
-    initStack(&s);
+// bool areParenthesesBalanced(const char *expr)
+// {
+//     Stack s;
+//     initStack(&s);
 
-    for (int i = 0; i < strlen(expr); i++)
-    {
-        if (expr[i] == '(' || expr[i] == '{' || expr[i] == '[')
-        {
-            push(&s, expr[i]);
-        }
-        else if (expr[i] == ')' || expr[i] == '}' || expr[i] == ']')
-        {
-            if (isEmpty(&s))
-            {
-                return false;
-            }
-            else if (!isMatchingPair(pop(&s), expr[i]))
-            {
-                return false;
-            }
-        }
-    }
+//     for (int i = 0; i < strlen(expr); i++)
+//     {
+//         if (expr[i] == '(' || expr[i] == '{' || expr[i] == '[')
+//         {
+//             push(&s, expr[i]);
+//         }
+//         else if (expr[i] == ')' || expr[i] == '}' || expr[i] == ']')
+//         {
+//             if (isEmpty(&s))
+//             {
+//                 return false;
+//             }
+//             else if (!isMatchingPair(pop(&s), expr[i]))
+//             {
+//                 return false;
+//             }
+//         }
+//     }
 
-    return isEmpty(&s);
-}
+//     return isEmpty(&s);
+// }
 
-bool check(char *expr)
-{
-    bool Balanced = areParenthesesBalanced(expr);
-    if (!Balanced)
-    {
-        exit(1);
-        return false;
-    }
 
-    if (expr[0] == '(' && expr[strlen(expr) - 1] == ')')
-    {
-        char substr[strlen(expr) - 2];
-        for (size_t i = 1; i < strlen(expr) - 1; i++)
-        {
-            substr[i - 1] = expr[i];
-        }
 
-        return areParenthesesBalanced(substr);
-    }
-    else
-    {
-        return false;
-    }
-}
+// bool check(char *expr)
+// {
+//     bool Balanced = areParenthesesBalanced(expr);
+//     if (!Balanced)
+//     {
+//         exit(1);
+//         return false;
+//     }
+
+//     if (expr[0] == '(' && expr[strlen(expr) - 1] == ')')
+//     {
+//         char substr[strlen(expr) - 2];
+//         for (size_t i = 1; i < strlen(expr) - 1; i++)
+//         {
+//             substr[i - 1] = expr[i];
+//         }
+
+//         return areParenthesesBalanced(substr);
+//     }
+//     else
+//     {
+//         return false;
+//     }
+// }
 
 // 定义运算符的优先级
 int getPriority(char op)

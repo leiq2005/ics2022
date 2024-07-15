@@ -9,24 +9,32 @@
 #define MAX_EXPR_LEN 100
 int pos = 0;
 
-typedef enum
+bool areParenthesesBalanced(int p, int q)
 {
-    TK_NOTYPE,
-    TK_NUM,
-    TK_OP,
-    TK_LB,
-    TK_RB
-} TokenType;
+    Stack s;
+    initStack(&s);
 
-typedef struct token
-{
-    int type;
-    char len;
-    char str[32];
-} Token;
+    for (int i = p; i <= q; i++)
+    {
+        if (tokens[i].type == TK_LB)
+        {
+            push(&s, tokens[i].str[0]);
+        }
+        else if (tokens[i].type == TK_RB)
+        {
+            if (isEmpty(&s))
+            {
+                return false;
+            }
+            else if (!isMatchingPair(pop(&s), tokens[i].str[0]))
+            {
+                return false;
+            }
+        }
+    }
 
-Token tokens[64];
-
+    return isEmpty(&s);
+}
 void match(regex_t *regex, const char *p, regmatch_t *pmatch, regmatch_t *good)
 {
     int reti = regexec(regex, p, 1, pmatch, 0);
@@ -90,14 +98,50 @@ void getsubstr(int p, int q, char *substr)
         }
     }
 }
-bool check_parentheses(int p, int q)
-{
-    int len = getsize(p, q);
-    char substr[len];
-    substr[len] = '\0';
-    getsubstr(p, q, substr);
+// bool check_parentheses(int p, int q)
+// {
+//     int len = getsize(p, q);
+//     char substr[len];
+//     substr[len] = '\0';
+//     getsubstr(p, q, substr);
 
-    return check(substr);
+//     return check(substr);
+// }
+
+
+bool check_Parentheses(int p, int q)
+{
+    // bool Balanced = areParenthesesBalanced(p, q);
+    // if (!Balanced)
+    // {
+    //     exit(1);
+    //     return false;
+    // }
+
+    Stack s;
+    initStack(&s);
+
+    for (int i = p; i <= q; i++)
+    {
+        if (tokens[i].type == TK_LB)
+        {
+            push2(&s, tokens[i]);
+        }
+        else if (tokens[i].type == TK_RB)
+        {
+            assert(!isEmpty(&s));
+            Token c = pop2(&s);
+            if (i == q)
+            {
+                if (c.id == p)
+                {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
 int findMainOperatorPos(int p, int q)
 {
@@ -147,7 +191,7 @@ int eval(int p, int q)
         assert(tokens[p].type == TK_NUM);
         return atoi(tokens[p].str);
     }
-    else if (check_parentheses(p, q))
+    else if (check_Parentheses(p, q))
     {
         return eval(p + 1, q - 1);
     }
@@ -271,6 +315,7 @@ void match_regex(const char *expr)
         if (goodmatch.rm_so != MAX_EXPR_LEN)
         {
             Token token;
+            token.id = sizeof(tokens);
             token.type = tt;
             int t = 0;
             int start = goodmatch.rm_so;
