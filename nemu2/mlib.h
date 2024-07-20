@@ -18,7 +18,7 @@ typedef enum
 
 typedef struct token
 {
-    int id;
+    int index;
     int type;
     char len;
     char str[32];
@@ -109,6 +109,16 @@ bool isMatchingPair(char left, char right)
            (left == '[' && right == ']');
 }
 
+void removeSpaces(char* str) {
+    int i = 0, j = 0;
+    while (str[i]) {
+        if (str[i] != ' ') {
+            str[j++] = str[i];
+        }
+        i++;
+    }
+    str[j] = '\0';
+}
 // 检查表达式中的括号是否匹配
 // bool areParenthesesBalanced(const char *expr)
 // {

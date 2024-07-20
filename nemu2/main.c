@@ -9,6 +9,11 @@
 #define MAX_EXPR_LEN 100
 int pos = 0;
 
+void expressionerror()
+{
+    printf("expression is error.\n");
+}
+
 bool areParenthesesBalanced(int p, int q)
 {
     Stack s;
@@ -35,18 +40,7 @@ bool areParenthesesBalanced(int p, int q)
 
     return isEmpty(&s);
 }
-void match(regex_t *regex, const char *p, regmatch_t *pmatch, regmatch_t *good)
-{
-    int reti = regexec(regex, p, 1, pmatch, 0);
-    if (reti == 0)
-    {
-        if (pmatch[0].rm_so < good->rm_so)
-        {
-            good = pmatch;
-            // tt = TK_NUM;
-        }
-    }
-}
+
 void printtokens()
 {
 
@@ -78,46 +72,9 @@ void printstr(char *str)
     }
     printf("\n");
 }
-void getsubstr(int p, int q, char *substr)
-{
-    int lens = strlen(substr);
-    printf("substr len: %u \n", lens);
-    int m = 0;
-    for (size_t i = p; i <= q; i++)
-    {
-        char *temp = tokens[i].str;
-
-        int len = strlen(temp);
-        printf("===== %d \n", len);
-
-        for (size_t x = 0; x < len; x++)
-        {
-
-            substr[m++] = temp[x];
-            printstr(substr);
-        }
-    }
-}
-// bool check_parentheses(int p, int q)
-// {
-//     int len = getsize(p, q);
-//     char substr[len];
-//     substr[len] = '\0';
-//     getsubstr(p, q, substr);
-
-//     return check(substr);
-// }
-
 
 bool check_Parentheses(int p, int q)
 {
-    // bool Balanced = areParenthesesBalanced(p, q);
-    // if (!Balanced)
-    // {
-    //     exit(1);
-    //     return false;
-    // }
-
     Stack s;
     initStack(&s);
 
@@ -133,7 +90,7 @@ bool check_Parentheses(int p, int q)
             Token c = pop2(&s);
             if (i == q)
             {
-                if (c.id == p)
+                if (c.index == p)
                 {
                     return true;
                 }
@@ -146,7 +103,7 @@ bool check_Parentheses(int p, int q)
 int findMainOperatorPos(int p, int q)
 {
     int minPriority = MAX;
-    int mainOperatorIndex = 999;
+    int mainOperatorIndex = -1;
     int brackets = 0;
 
     for (int i = p; i <= q; i++)
@@ -198,6 +155,8 @@ int eval(int p, int q)
     else
     {
         int op_pos = findMainOperatorPos(p, q);
+        assert(op_pos != -1);
+        assert(tokens[op_pos].type == TK_OP);
 
         printf("main op pos: %d \n", op_pos);
         printf("p: %d \n", p);
@@ -205,7 +164,7 @@ int eval(int p, int q)
         int val1 = eval(p, op_pos - 1);
         int val2 = eval(op_pos + 1, q);
 
-        assert(tokens[op_pos].type == TK_OP);
+        
         switch (tokens[op_pos].str[0])
         {
         case '+':
@@ -315,13 +274,13 @@ void match_regex(const char *expr)
         if (goodmatch.rm_so != MAX_EXPR_LEN)
         {
             Token token;
-            token.id = sizeof(tokens);
+            token.index = pos;
             token.type = tt;
             int t = 0;
             int start = goodmatch.rm_so;
             int end = goodmatch.rm_eo;
             token.len = end - start;
-
+            printf("TK so:%d eo:%d\n", start, end);
             printf("TK:%d Matched: ", tt);
             for (int i = start; i < end; i++)
             {
@@ -358,7 +317,10 @@ int main()
             expr[len - 1] = '\0';
         }
 
+        removeSpaces(expr);
+
         match_regex(expr);
+
         printtokens();
 
         int tokennum = 0;
@@ -371,7 +333,20 @@ int main()
             }
         }
         printf("tokens num: %d\n", tokennum);
+
+
+
+        bool Balanced = areParenthesesBalanced(0, tokennum - 1);
+        if (!Balanced)
+        {
+            printf("expression is error.\n");
+            return false;
+        }
+
+
+
         int x = eval(0, tokennum - 1);
+
         printf("expression value: %d\n", x);
     }
     else

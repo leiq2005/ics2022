@@ -1,25 +1,26 @@
 #include <stdio.h>
 #include <string.h>
-void main()
-{
-    char str[] = "abc1234";
-    char str2[] = "AAA";
-    for (size_t i = 0; i < 9; i++)
-    {
-        printf("c= %d\n", str[i]);
+
+void removeSpaces(char* str) {
+    int i = 0, j = 0;
+    while (str[i]) {
+        if (str[i] != ' ') {
+            str[j++] = str[i];
+        }
+        i++;
     }
-    
-    str[1] = 'E';
-    printf("Hello World: str len= %d\n", strlen(str));
-
-    printf("Hello World: str = %s\n", str);
-    printf("Hello World: str2 = %s\n", str2);
-
-
-    printf("Hello World: str ptr = %p\n", str);
-    printf("Hello World: str2 ptr = %p\n", str2);
+    str[j] = '\0';
 }
 
+int main() {
+    char str[] = "H e l l o ,  W o r l d ! ";
+    printf("Original string: '%s'\n", str);
+    
+    removeSpaces(str);
+    printf("String after removing spaces: '%s'\n", str);
+    
+    return 0;
+}
 
 // #include <stdio.h>
 // #include <stdlib.h>
